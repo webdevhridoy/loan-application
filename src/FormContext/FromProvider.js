@@ -1,7 +1,9 @@
 import React, { createContext, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 export const FromContext = createContext();
 const FromProvider = ({ children }) => {
+    const { register, handleSubmit, formState: { errors } } = useForm();
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState("");
     const [mobileNumber, setMobileNumber] = useState("");
@@ -36,7 +38,8 @@ const FromProvider = ({ children }) => {
         monthlyIncome, setMonthlyIncome,
         interestRate, setInterestRate,
         loanTenure, setLoanTenure,
-        loanPurpose, setLoanPurpose
+        loanPurpose, setLoanPurpose,
+        register, handleSubmit, errors
 
     };
     return (
