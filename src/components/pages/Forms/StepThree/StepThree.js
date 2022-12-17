@@ -1,68 +1,71 @@
-import React, { useContext } from 'react';
-import { useForm } from 'react-hook-form';
-import { FromContext } from '../../../../FormContext/FromProvider';
+import React from 'react';
+import { toast } from 'react-hot-toast';
 
-const StepThree = () => {
-    const { loanAmount, setLoanAmount,
-        monthlyIncome, setMonthlyIncome,
-        interestRate, setInterestRate,
-        loanTenure, setLoanTenure,
-        loanPurpose, setLoanPurpose } = useContext(FromContext);
-    const { register } = useForm();
+const StepThree = ({ register, handleSubmit, reset: hookReset, page, setPage }) => {
+    const handleSubmitForm = (data, e) => {
+        if (data) {
+            fetch('https://dygnify-ventures-server.vercel.app/loans-info', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.acknowledged) {
+                        toast.success('Submission completed');
+                        hookReset();
+                        e.target.reset();
+                    }
+                });
+        }
+    };
     return (
         <div>
             <h2 className='text-gray-800 text-3xl font-bold mb-3 pl-3 md:pl-0'>Loan Details</h2>
-            <div>
+            <form form onSubmit={handleSubmit(handleSubmitForm)}>
                 <div className='flex justify-start flex-col md:flex-row items-center'>
                     <div className='mr-5 my-2 pl-3 md:pl-0'>
-                        <label htmlFor="first-name" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block  label-text ">
+                        <label htmlFor="loanAmount" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block  label-text ">
                             Loan Amount
                         </label>
                         <input
-                            {...register("loanAmount", { required: "Field Address is required" })}
+                            {...register("loanAmount")}
                             id='loanAmount'
                             type="text"
                             name="loanAmount"
-                            value={loanAmount}
-                            onChange={(e) => {
-                                setLoanAmount(e.target.value);
-                            }}
+                            placeholder='$'
                             className="text-xs font-medium leading-none focus:outline-none focus:ring-0 py-3 w-96 pl-2" />
                     </div>
                     <div className='mr-5 my-2 pl-3 md:pl-0'>
-                        <label htmlFor="first-name" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block label-text ">
+                        <label htmlFor="monthlyIncome" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block label-text ">
                             Monthly Income
                         </label>
                         <input
-                            {...register("monthlyIncome", { required: "Field Address is required" })}
+                            {...register("monthlyIncome")}
                             id='monthlyIncome'
                             type="text"
                             name="monthlyIncome"
-                            value={monthlyIncome}
-                            onChange={(e) => {
-                                setMonthlyIncome(e.target.value);
-                            }}
+                            placeholder='$'
                             className="text-xs font-medium leading-none focus:outline-none focus:ring-0 py-3 w-96 pl-2" />
                     </div>
                 </div>
                 <div className='flex justify-start flex-col md:flex-row items-center'>
                     <div className='mr-5 my-2 pl-3 md:pl-0'>
-                        <label htmlFor="first-name" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block  label-text ">
+                        <label htmlFor="interestRate" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block  label-text ">
                             Interest Rate
                         </label>
                         <input
-                            {...register("interestRate", { required: "Field Address is required" })}
+                            {...register("interestRate")}
                             id='interestRate'
                             type="text"
                             name="interestRate"
-                            value={interestRate}
-                            onChange={(e) => {
-                                setInterestRate(e.target.value);
-                            }}
+                            placeholder='%'
                             className="text-xs font-medium leading-none focus:outline-none focus:ring-0 py-3 w-96 pl-2" />
                     </div>
                     <div className='mr-5 my-2 pl-3 md:pl-0'>
-                        <label htmlFor="first-name" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block  label-text ">
+                        <label htmlFor="loanTenure" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block  label-text ">
                             Loan Tenure
                         </label>
                         <input
@@ -70,31 +73,42 @@ const StepThree = () => {
                             id='loanTenure'
                             type="text"
                             name="loanTenure"
-                            value={loanTenure}
-                            onChange={(e) => {
-                                setLoanTenure(e.target.value);
-                            }}
                             className="text-xs font-medium leading-none focus:outline-none focus:ring-0 py-3 w-96 pl-2" />
                     </div>
                 </div>
                 <div className='flex justify-start flex-col md:flex-row items-center'>
                     <div className='mr-5 my-2 pl-3 md:pl-0'>
-                        <label htmlFor="first-name" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block  label-text ">
+                        <label htmlFor="loanPurpose" className="text-base font-[sans-serif] font-medium leading-none text-gray-800 pb-4 block  label-text ">
                             Purpose of Loan
                         </label>
-                        <input
+                        <select
+                            required
                             {...register("loanPurpose", { required: "Field Address is required" })}
                             id='loanPurpose'
                             type="text"
                             name="loanPurpose"
-                            value={loanPurpose}
-                            onChange={(e) => {
-                                setLoanPurpose(e.target.value);
-                            }}
-                            className="text-xs font-medium leading-none focus:outline-none focus:ring-0 py-3 w-96 pl-2" />
+                            className="text-xs font-medium leading-none focus:outline-none focus:ring-0 py-3 w-96 pl-2">
+                            <option value="">Select Purpose of Loan</option>
+                            <option value="Business">Business</option><option value="Home Purchase">Home Purchase</option>
+                            <option value="Car Purchase">Car Purchase</option>
+                            <option value="Holiday">Holiday</option>
+                            <option value="Wedding">Wedding</option>
+                            <option value="Investment">Investment</option>
+                            <option value="Payday Loan">Payday Loan</option>
+                            <option value="Startup">Startup</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
                 </div>
-            </div>
+                <div className='pl-3 md:pl-0 pt-5'>
+                    <button onClick={() => {
+                        const nextPage = page - 1;
+                        setPage(nextPage);
+                    }}
+                        type='submit' className='focus:ring-2 focus:ring-offset-2 text-sm font-semibold leading-none text-white focus:outline-none get-started py-3 px-6 rounded mr-2 bg-gray-800'>Back</button>
+                    <button type='submit' className='focus:ring-2 focus:ring-offset-2 text-sm font-semibold leading-none text-white focus:outline-none get-started py-3 px-6 rounded mr-2 bg-gray-800'>Submit</button>
+                </div>
+            </form>
         </div>
     );
 };
